@@ -1,0 +1,134 @@
+-- Chargement de la bibliothèque de notification
+local NotificationLoad = loadstring(game:HttpGet('https://raw.githubusercontent.com/treeofplant/Notif/main/library.lua', true))()
+
+if not NotificationLoad then
+    error("Notification library failed to load.")
+end
+
+-- Créer les éléments GUI
+local ScreenGui = Instance.new("ScreenGui")
+local MainFrame = Instance.new("Frame")
+local TextBox = Instance.new("TextBox")
+local SendButton = Instance.new("TextButton")
+local ToggleButton = Instance.new("TextButton")
+
+-- Fonction d'application des coins arrondis
+local function applyCorners(instance, cornerRadius)
+    local corner = Instance.new("UICorner")
+    corner.CornerRadius = UDim.new(0, cornerRadius)
+    corner.Parent = instance
+end
+
+-- Propriétés du GUI
+ScreenGui.Name = "CustomGui"
+ScreenGui.Parent = game.CoreGui
+
+MainFrame.Name = "MainFrame"
+MainFrame.Parent = ScreenGui
+MainFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+MainFrame.Position = UDim2.new(0.5, -100, 0.5, -75)
+MainFrame.Size = UDim2.new(0, 200, 0, 150)
+applyCorners(MainFrame, 10)
+
+TextBox.Parent = MainFrame
+TextBox.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+TextBox.Position = UDim2.new(0.1, 0, 0.2, 0)
+TextBox.Size = UDim2.new(0.8, 0, 0.3, 0)
+TextBox.Font = Enum.Font.SourceSans
+TextBox.PlaceholderText = "Enter music ID"
+TextBox.Text = ""
+TextBox.TextColor3 = Color3.fromRGB(255, 255, 255)
+TextBox.TextSize = 14
+applyCorners(TextBox, 8)
+
+SendButton.Parent = MainFrame
+SendButton.BackgroundColor3 = Color3.fromRGB(0, 170, 255)
+SendButton.Position = UDim2.new(0.1, 0, 0.6, 0)
+SendButton.Size = UDim2.new(0.8, 0, 0.3, 0)
+SendButton.Font = Enum.Font.GothamBold
+SendButton.Text = "Send"
+SendButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+SendButton.TextSize = 14
+applyCorners(SendButton, 8)
+
+-- Créer le bouton Toggle UI
+ToggleButton.Parent = ScreenGui
+ToggleButton.BackgroundColor3 = Color3.fromRGB(0, 170, 255)
+ToggleButton.Position = UDim2.new(0, 0, 0.4, 0)  -- Positionné à gauche
+ToggleButton.Size = UDim2.new(0, 100, 0, 30)
+ToggleButton.Font = Enum.Font.GothamBold
+ToggleButton.Text = "Toggle UI"
+ToggleButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+ToggleButton.TextSize = 14
+applyCorners(ToggleButton, 8)
+
+-- Fonction pour créer une notification
+local function createNotification(title, description, timeout)
+    NotificationLoad:NewNotification({
+        ["Mode"] = "Custom",
+        ["Title"] = title,
+        ["Description"] = description,
+        ["Notification_Image"] = "rbxassetid://",
+        ["Notification_Sound"] = "rbxassetid://6031098704",
+        ["Timeout"] = timeout or 5,
+        ["Audio"] = true
+    })
+end
+
+-- Fonction pour envoyer les données au serveur
+SendButton.MouseButton1Click:Connect(function()
+    local musicId = TextBox.Text -- Récupère l'ID de la TextBox
+
+    -- Validation simple pour vérifier si l'ID est vide
+    if musicId == "" then
+        createNotification("Error", "Please enter a valid music ID.", 5)
+        return
+    end
+
+    -- Arguments pour FireServer
+    local args = {
+        [1] = "PickingScooterMusicText",
+        [2] = musicId -- Utilise l'ID saisi par l'utilisateur
+    }
+
+    -- Envoie au serveur via FireServer
+    game:GetService("ReplicatedStorage").RE:FindFirstChild("1NoMoto1rVehicle1s"):FireServer(unpack(args))
+
+    -- Créer une notification avec l'ID de la chanson
+    createNotification("Music ID Sent", "The music ID is: " .. musicId)
+end)
+
+-- Fonction pour toggle l'affichage du MainFrame
+ToggleButton.MouseButton1Click:Connect(function()
+    MainFrame.Visible = not MainFrame.Visible
+end)
+
+-- Fonction pour rendre le bouton Toggle UI déplaçable
+local dragging = false
+local dragInput, mousePos, framePos
+
+ToggleButton.InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 then
+        dragging = true
+        mousePos = input.Position
+        framePos = ToggleButton.Position
+        input.Changed:Connect(function()
+            if input.UserInputState == Enum.UserInputState.End then
+                dragging = false
+            end
+        end)
+    end
+end)
+
+ToggleButton.InputChanged:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseMovement then
+        dragInput = input
+    end
+end)
+
+game:GetService("UserInputService").InputChanged:Connect(function(input)
+    if input == dragInput and dragging then
+        local delta = input.Position - mousePos
+        ToggleButton.Position = UDim2.new(framePos.X.Scale, framePos.X.Offset + delta.X, framePos.Y.Scale, framePos.Y.Offset + delta.Y)
+    end
+end)
