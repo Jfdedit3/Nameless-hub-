@@ -54,7 +54,7 @@ applyCorners(SendButton, 8)
 -- Créer le bouton Toggle UI
 ToggleButton.Parent = ScreenGui
 ToggleButton.BackgroundColor3 = Color3.fromRGB(0, 170, 255)
-ToggleButton.Position = UDim2.new(0, 0, 0.4, 0)  -- Positionné à gauche
+ToggleButton.Position = UDim2.new(0, 0, 0.4, 0)
 ToggleButton.Size = UDim2.new(0, 100, 0, 30)
 ToggleButton.Font = Enum.Font.GothamBold
 ToggleButton.Text = "Toggle UI"
@@ -77,9 +77,9 @@ end
 
 -- Fonction pour envoyer les données au serveur
 SendButton.MouseButton1Click:Connect(function()
-    local musicId = TextBox.Text -- Récupère l'ID de la TextBox
+    local musicId = TextBox.Text
 
-    -- Validation simple pour vérifier si l'ID est vide
+    -- Validation simple
     if musicId == "" then
         createNotification("Error", "Please enter a valid music ID.", 5)
         return
@@ -88,13 +88,13 @@ SendButton.MouseButton1Click:Connect(function()
     -- Arguments pour FireServer
     local args = {
         [1] = "PickingScooterMusicText",
-        [2] = musicId -- Utilise l'ID saisi par l'utilisateur
+        [2] = musicId
     }
 
     -- Envoie au serveur via FireServer
     game:GetService("ReplicatedStorage").RE:FindFirstChild("1NoMoto1rVehicle1s"):FireServer(unpack(args))
 
-    -- Créer une notification avec l'ID de la chanson
+    -- Notification avec l'ID de la chanson
     createNotification("Music ID Sent", "The music ID is: " .. musicId)
 end)
 
@@ -132,3 +132,9 @@ game:GetService("UserInputService").InputChanged:Connect(function(input)
         ToggleButton.Position = UDim2.new(framePos.X.Scale, framePos.X.Offset + delta.X, framePos.Y.Scale, framePos.Y.Offset + delta.Y)
     end
 end)
+
+local args = {
+    [1] = "SegwaySmall"
+}
+
+game:GetService("ReplicatedStorage").RE:FindFirstChild("1NoMoto1rVehicle1s"):FireServer(unpack(args))
