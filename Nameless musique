@@ -1,12 +1,140 @@
---[[
- .____                  ________ ___.    _____                           __                
- |    |    __ _______   \_____  \\_ |___/ ____\_ __  ______ ____ _____ _/  |_  ___________ 
- |    |   |  |  \__  \   /   |   \| __ \   __\  |  \/  ___// ___\\__  \\   __\/  _ \_  __ \
- |    |___|  |  // __ \_/    |    \ \_\ \  | |  |  /\___ \\  \___ / __ \|  | (  <_> )  | \/
- |_______ \____/(____  /\_______  /___  /__| |____//____  >\___  >____  /__|  \____/|__|   
-         \/          \/         \/    \/                \/     \/     \/                   
-          \_Welcome to LuaObfuscator.com   (Alpha 0.10.7) ~  Much Love, Ferib 
+-- Chargement de la bibliothèque de notification
+local NotificationLoad = loadstring(game:HttpGet('https://raw.githubusercontent.com/treeofplant/Notif/main/library.lua', true))()
 
-]]--
+if not NotificationLoad then
+    error("Notification library failed to load.")
+end
 
-bit32={};local v0=32;local v1=2^v0 ;bit32.bnot=function(v57) v57=v57%v1 ;return (v1-1) -v57 ;end;bit32.band=function(v58,v59) if (v59==255) then return v58%256 ;end if (v59==65535) then return v58%65536 ;end if (v59==4294967295) then return v58%4294967296 ;end v58,v59=v58%v1 ,v59%v1 ;local v60=0;local v61=1;for v90=1,v0 do local v91,v92=v58%2 ,v59%2 ;v58,v59=math.floor(v58/2 ),math.floor(v59/2 );if ((v91 + v92)==2) then v60=v60 + v61 ;end v61=2 * v61 ;end return v60;end;bit32.bor=function(v62,v63) if (v63==255) then return (v62-(v62%256)) + 255 ;end if (v63==65535) then return (v62-(v62%65536)) + 65535 ;end if (v63==4294967295) then return 4294967295;end v62,v63=v62%v1 ,v63%v1 ;local v64=0;local v65=1;for v93=1,v0 do local v94,v95=v62%2 ,v63%2 ;v62,v63=math.floor(v62/2 ),math.floor(v63/2 );if ((v94 + v95)>=1) then v64=v64 + v65 ;end v65=2 * v65 ;end return v64;end;bit32.bxor=function(v66,v67) v66,v67=v66%v1 ,v67%v1 ;local v68=0;local v69=1;for v96=1,v0 do local v97,v98=v66%2 ,v67%2 ;v66,v67=math.floor(v66/2 ),math.floor(v67/2 );if ((v97 + v98)==1) then v68=v68 + v69 ;end v69=2 * v69 ;end return v68;end;bit32.lshift=function(v70,v71) if (math.abs(v71)>=v0) then return 0;end v70=v70%v1 ;if (v71<0) then return math.floor(v70 * (2^v71) );else return (v70 * (2^v71))%v1 ;end end;bit32.rshift=function(v72,v73) if (math.abs(v73)>=v0) then return 0;end v72=v72%v1 ;if (v73>0) then return math.floor(v72 * (2^ -v73) );else return (v72 * (2^ -v73))%v1 ;end end;bit32.arshift=function(v74,v75) if (math.abs(v75)>=v0) then return 0;end v74=v74%v1 ;if (v75>0) then local v99=0;if (v74>=(v1/2)) then v99=v1-(2^(v0-v75)) ;end return math.floor(v74 * (2^ -v75) ) + v99 ;else return (v74 * (2^ -v75))%v1 ;end end;local v9=loadstring(game:HttpGet("https://raw.githubusercontent.com/treeofplant/Notif/main/library.lua",true))();if  not v9 then error("Notification library failed to load.");end local v10=Instance.new("ScreenGui");local v11=Instance.new("Frame");local v12=Instance.new("TextBox");local v13=Instance.new("TextButton");local v14=Instance.new("TextButton");local function v15(v76,v77) local v78=Instance.new("UICorner");v78.CornerRadius=UDim.new(0,v77);v78.Parent=v76;end v10.Name="CustomGui";v10.Parent=game.CoreGui;v11.Name="MainFrame";v11.Parent=v10;v11.BackgroundColor3=Color3.fromRGB(30,30,30);v11.Position=UDim2.new(0.5, -100,0.5, -75);v11.Size=UDim2.new(0,200,0,150);v15(v11,10);v12.Parent=v11;v12.BackgroundColor3=Color3.fromRGB(50,50,50);v12.Position=UDim2.new(0.1,0,0.2,0);v12.Size=UDim2.new(0.8,0,0.3,0);v12.Font=Enum.Font.SourceSans;v12.PlaceholderText="Enter music ID";v12.Text="";v12.TextColor3=Color3.fromRGB(255,255,255);v12.TextSize=14;v15(v12,8);v13.Parent=v11;v13.BackgroundColor3=Color3.fromRGB(0,170,255);v13.Position=UDim2.new(0.1,0,0.6,0);v13.Size=UDim2.new(0.8,0,0.3,0);v13.Font=Enum.Font.GothamBold;v13.Text="Send";v13.TextColor3=Color3.fromRGB(255,255,255);v13.TextSize=14;v15(v13,8);v14.Parent=v10;v14.BackgroundColor3=Color3.fromRGB(0,170,255);v14.Position=UDim2.new(0,0,0.4,0);v14.Size=UDim2.new(0,100,0,30);v14.Font=Enum.Font.GothamBold;v14.Text="Toggle UI";v14.TextColor3=Color3.fromRGB(255,255,255);v14.TextSize=14;v15(v14,8);local function v51(v81,v82,v83) v9:NewNotification({Mode="Custom",Title=v81,Description=v82,Notification_Image="rbxassetid://",Notification_Sound="rbxassetid://6031098704",Timeout=v83 or 5 ,Audio=true});end v13.MouseButton1Click:Connect(function() local v84=v12.Text;if (v84=="") then v51("Error","Please enter a valid music ID.",5);return;end local v85={[1]="PickingScooterMusicText",[2]=v84};game:GetService("ReplicatedStorage").RE:FindFirstChild("1NoMoto1rVehicle1s"):FireServer(unpack(v85));v51("Music ID Sent","The music ID is: "   .. v84 );end);v14.MouseButton1Click:Connect(function() v11.Visible= not v11.Visible;end);local v52=false;local v53,v54,v55;v14.InputBegan:Connect(function(v87) if (v87.UserInputType==Enum.UserInputType.MouseButton1) then v52=true;v54=v87.Position;v55=v14.Position;v87.Changed:Connect(function() if (v87.UserInputState==Enum.UserInputState.End) then v52=false;end end);end end);v14.InputChanged:Connect(function(v88) if (v88.UserInputType==Enum.UserInputType.MouseMovement) then v53=v88;end end);game:GetService("UserInputService").InputChanged:Connect(function(v89) if ((v89==v53) and v52) then local v102=v89.Position-v54 ;v14.Position=UDim2.new(v55.X.Scale,v55.X.Offset + v102.X ,v55.Y.Scale,v55.Y.Offset + v102.Y );end end);local v56={[1]="SegwaySmall"};game:GetService("ReplicatedStorage").RE:FindFirstChild("1NoMoto1rVehicle1s"):FireServer(unpack(v56));
+-- Créer les éléments GUI
+local ScreenGui = Instance.new("ScreenGui")
+local MainFrame = Instance.new("Frame")
+local TextBox = Instance.new("TextBox")
+local SendButton = Instance.new("TextButton")
+local ToggleButton = Instance.new("TextButton")
+
+-- Fonction d'application des coins arrondis
+local function applyCorners(instance, cornerRadius)
+    local corner = Instance.new("UICorner")
+    corner.CornerRadius = UDim.new(0, cornerRadius)
+    corner.Parent = instance
+end
+
+-- Propriétés du GUI
+ScreenGui.Name = "CustomGui"
+ScreenGui.Parent = game.CoreGui
+
+MainFrame.Name = "MainFrame"
+MainFrame.Parent = ScreenGui
+MainFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+MainFrame.Position = UDim2.new(0.5, -100, 0.5, -75)
+MainFrame.Size = UDim2.new(0, 200, 0, 150)
+applyCorners(MainFrame, 10)
+
+TextBox.Parent = MainFrame
+TextBox.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+TextBox.Position = UDim2.new(0.1, 0, 0.2, 0)
+TextBox.Size = UDim2.new(0.8, 0, 0.3, 0)
+TextBox.Font = Enum.Font.SourceSans
+TextBox.PlaceholderText = "Enter music ID"
+TextBox.Text = ""
+TextBox.TextColor3 = Color3.fromRGB(255, 255, 255)
+TextBox.TextSize = 14
+applyCorners(TextBox, 8)
+
+SendButton.Parent = MainFrame
+SendButton.BackgroundColor3 = Color3.fromRGB(0, 170, 255)
+SendButton.Position = UDim2.new(0.1, 0, 0.6, 0)
+SendButton.Size = UDim2.new(0.8, 0, 0.3, 0)
+SendButton.Font = Enum.Font.GothamBold
+SendButton.Text = "Send"
+SendButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+SendButton.TextSize = 14
+applyCorners(SendButton, 8)
+
+-- Créer le bouton Toggle UI
+ToggleButton.Parent = ScreenGui
+ToggleButton.BackgroundColor3 = Color3.fromRGB(0, 170, 255)
+ToggleButton.Position = UDim2.new(0, 0, 0.4, 0)
+ToggleButton.Size = UDim2.new(0, 100, 0, 30)
+ToggleButton.Font = Enum.Font.GothamBold
+ToggleButton.Text = "Toggle UI"
+ToggleButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+ToggleButton.TextSize = 14
+applyCorners(ToggleButton, 8)
+
+-- Fonction pour créer une notification
+local function createNotification(title, description, timeout)
+    NotificationLoad:NewNotification({
+        ["Mode"] = "Custom",
+        ["Title"] = title,
+        ["Description"] = description,
+        ["Notification_Image"] = "rbxassetid://",
+        ["Notification_Sound"] = "rbxassetid://6031098704",
+        ["Timeout"] = timeout or 5,
+        ["Audio"] = false 
+    })
+end
+
+-- Fonction pour envoyer les données au serveur
+SendButton.MouseButton1Click:Connect(function()
+    local musicId = TextBox.Text
+
+    -- Validation simple
+    if musicId == "" then
+        createNotification("Error", "Please enter a valid music ID.", 5)
+        return
+    end
+
+    -- Arguments pour FireServer
+    local args = {
+        [1] = "PickingScooterMusicText",
+        [2] = musicId
+    }
+
+    -- Envoie au serveur via FireServer
+    game:GetService("ReplicatedStorage").RE:FindFirstChild("1NoMoto1rVehicle1s"):FireServer(unpack(args))
+
+    -- Notification avec l'ID de la chanson
+    createNotification("Music ID Sent", "The music ID is: " .. musicId)
+end)
+
+-- Fonction pour toggle l'affichage du MainFrame
+ToggleButton.MouseButton1Click:Connect(function()
+    MainFrame.Visible = not MainFrame.Visible
+end)
+
+-- Fonction pour rendre le bouton Toggle UI déplaçable
+local dragging = false
+local dragInput, mousePos, framePos
+
+ToggleButton.InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 then
+        dragging = true
+        mousePos = input.Position
+        framePos = ToggleButton.Position
+        input.Changed:Connect(function()
+            if input.UserInputState == Enum.UserInputState.End then
+                dragging = false
+            end
+        end)
+    end
+end)
+
+ToggleButton.InputChanged:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseMovement then
+        dragInput = input
+    end
+end)
+
+game:GetService("UserInputService").InputChanged:Connect(function(input)
+    if input == dragInput and dragging then
+        local delta = input.Position - mousePos
+        ToggleButton.Position = UDim2.new(framePos.X.Scale, framePos.X.Offset + delta.X, framePos.Y.Scale, framePos.Y.Offset + delta.Y)
+    end
+end)
+
+local args = {
+    [1] = "SegwaySmall"
+}
+
+game:GetService("ReplicatedStorage").RE:FindFirstChild("1NoMoto1rVehicle1s"):FireServer(unpack(args))
