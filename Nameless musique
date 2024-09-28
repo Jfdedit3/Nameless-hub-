@@ -62,6 +62,48 @@ ToggleButton.TextColor3 = Color3.fromRGB(255, 255, 255)
 ToggleButton.TextSize = 14
 applyCorners(ToggleButton, 8)
 
+-- Importer TweenService pour créer des animations douces
+local TweenService = game:GetService("TweenService")
+
+-- Fonction pour animer l'apparition et la disparition du MainFrame et de ses enfants
+local function animateGuiElements(isVisible, duration)
+    local tweenInfo = TweenInfo.new(
+        duration, -- Durée de l'animation
+        Enum.EasingStyle.Quad, -- Style de transition
+        Enum.EasingDirection.Out -- Direction de la transition
+    )
+
+    -- Objectifs d'animation pour les éléments GUI
+    local mainFrameGoal = {BackgroundTransparency = isVisible and 0 or 1}
+    local textBoxGoal = {BackgroundTransparency = isVisible and 0 or 1, TextTransparency = isVisible and 0 or 1}
+    local sendButtonGoal = {BackgroundTransparency = isVisible and 0 or 1, TextTransparency = isVisible and 0 or 1}
+
+    -- Créer et jouer les animations pour chaque élément
+    local mainFrameTween = TweenService:Create(MainFrame, tweenInfo, mainFrameGoal)
+    local textBoxTween = TweenService:Create(TextBox, tweenInfo, textBoxGoal)
+    local sendButtonTween = TweenService:Create(SendButton, tweenInfo, sendButtonGoal)
+
+    -- Lancer les animations
+    mainFrameTween:Play()
+    textBoxTween:Play()
+    sendButtonTween:Play()
+end
+
+-- Au démarrage du script, le GUI s'affiche immédiatement
+animateGuiElements(true, 0.5) -- Animation d'apparition initiale
+
+-- Fonction pour toggler le GUI avec animation douce
+ToggleButton.MouseButton1Click:Connect(function()
+    if MainFrame.Visible then
+        animateGuiElements(false, 0.5)  -- Animation de disparition
+        wait(0.5)
+        MainFrame.Visible = false
+    else
+        MainFrame.Visible = true
+        animateGuiElements(true, 0.5)  -- Animation d'apparition
+    end
+end)
+
 -- Fonction pour créer une notification
 local function createNotification(title, description, timeout)
     NotificationLoad:NewNotification({
@@ -98,11 +140,6 @@ SendButton.MouseButton1Click:Connect(function()
     createNotification("Music ID Sent", "The music ID is: " .. musicId)
 end)
 
--- Fonction pour toggle l'affichage du MainFrame
-ToggleButton.MouseButton1Click:Connect(function()
-    MainFrame.Visible = not MainFrame.Visible
-end)
-
 -- Fonction pour rendre le bouton Toggle UI déplaçable
 local dragging = false
 local dragInput, mousePos, framePos
@@ -132,9 +169,3 @@ game:GetService("UserInputService").InputChanged:Connect(function(input)
         ToggleButton.Position = UDim2.new(framePos.X.Scale, framePos.X.Offset + delta.X, framePos.Y.Scale, framePos.Y.Offset + delta.Y)
     end
 end)
-
-local args = {
-    [1] = "SegwaySmall"
-}
-
-game:GetService("ReplicatedStorage").RE:FindFirstChild("1NoMoto1rVehicle1s"):FireServer(unpack(args))
