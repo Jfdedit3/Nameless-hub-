@@ -54,7 +54,7 @@ applyCorners(SendButton, 8)
 -- Créer le bouton Toggle UI
 ToggleButton.Parent = ScreenGui
 ToggleButton.BackgroundColor3 = Color3.fromRGB(0, 170, 255)
-ToggleButton.Position = UDim2.new(0, 0, 0.4, 0)
+ToggleButton.Position = UDim2.new(0, 0, 1, -130) -- Positionné 75% plus haut et complètement à gauche
 ToggleButton.Size = UDim2.new(0, 100, 0, 30)
 ToggleButton.Font = Enum.Font.GothamBold
 ToggleButton.Text = "Toggle UI"
