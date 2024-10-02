@@ -73,7 +73,7 @@ HouseSendButton.BackgroundColor3 = Color3.fromRGB(0, 170, 255)
 HouseSendButton.Position = UDim2.new(0.55, 0, 0.6, 0) -- Positionné en bas à droite
 HouseSendButton.Size = UDim2.new(0.35, 0, 0.25, 0) -- Taille réduite
 HouseSendButton.Font = Enum.Font.GothamBold
-HouseSendButton.Text = "Send House Music"
+HouseSendButton.Text = "Send Music"
 HouseSendButton.TextColor3 = Color3.fromRGB(255, 255, 255)
 HouseSendButton.TextSize = 12 -- Réduit la taille du texte
 applyCorners(HouseSendButton, 8)
@@ -81,7 +81,7 @@ applyCorners(HouseSendButton, 8)
 -- Créer le bouton Toggle UI
 ToggleButton.Parent = ScreenGui
 ToggleButton.BackgroundColor3 = Color3.fromRGB(0, 170, 255)
-ToggleButton.Position = UDim2.new(0, 0, 0, 50) -- Positionné vers le bas, 50 pixels du haut (ancienne position)
+ToggleButton.Position = UDim2.new(0.5, -350, 0, 25) -- Positionné en haut au centre
 ToggleButton.Size = UDim2.new(0, 100, 0, 30)
 ToggleButton.Font = Enum.Font.GothamBold
 ToggleButton.Text = "Toggle UI"
@@ -186,14 +186,14 @@ HouseSendButton.MouseButton1Click:Connect(function()
         return
     end
 
-    -- Arguments pour FireServer
-    local houseArgs = {
-        [1] = "HouseMusicText",
-        [2] = houseMusicId
+    -- Arguments pour FireServer avec les nouvelles valeurs
+    local args = {
+        [1] = "PickHouseMusicText", -- Remplacement de la valeur précédente
+        [2] = houseMusicId -- Utilisation de l'ID de musique de maison entré par l'utilisateur
     }
 
     -- Envoie au serveur via FireServer
-    game:GetService("ReplicatedStorage").RE:FindFirstChild("1NoMoto1rVehicle1s"):FireServer(unpack(houseArgs))
+    game:GetService("ReplicatedStorage").RE:FindFirstChild("1Player1sHous1e"):FireServer(unpack(args)) -- Remplacement de l'ancienne référence
 
     -- Notification avec le résultat
     createNotification("Success", "House music ID sent successfully!", 5)
