@@ -81,7 +81,7 @@ applyCorners(HouseSendButton, 8)
 -- Créer le bouton Toggle UI
 ToggleButton.Parent = ScreenGui
 ToggleButton.BackgroundColor3 = Color3.fromRGB(0, 170, 255)
-ToggleButton.Position = UDim2.new(0.5, -350, 0, 25) -- Positionné en haut au centre
+ToggleButton.Position = UDim2.new(0.5, -350, 0, 35) -- Positionné en haut au centre
 ToggleButton.Size = UDim2.new(0, 100, 0, 30)
 ToggleButton.Font = Enum.Font.GothamBold
 ToggleButton.Text = "Toggle UI"
