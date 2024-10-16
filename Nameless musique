@@ -60,7 +60,7 @@ Button1.BackgroundColor3 = Color3.fromRGB(0, 170, 255)
 Button1.Position = UDim2.new(0.72, 0, 0.1, 0) -- Positionné à droite de OverboardTextBox
 Button1.Size = UDim2.new(0.25, 0, 0.2, 0) -- Taille
 Button1.Font = Enum.Font.GothamBold
-Button1.Text = "Button 1"
+Button1.Text = "Send"
 Button1.TextColor3 = Color3.fromRGB(255, 255, 255)
 Button1.TextSize = 12
 applyCorners(Button1, 8)
@@ -82,7 +82,7 @@ Button2.BackgroundColor3 = Color3.fromRGB(0, 170, 255)
 Button2.Position = UDim2.new(0.72, 0, 0.35, 0) -- Positionné à droite de CarTextBox
 Button2.Size = UDim2.new(0.25, 0, 0.2, 0) -- Taille
 Button2.Font = Enum.Font.GothamBold
-Button2.Text = "Button 2"
+Button2.Text = "Send"
 Button2.TextColor3 = Color3.fromRGB(255, 255, 255)
 Button2.TextSize = 12
 applyCorners(Button2, 8)
@@ -104,7 +104,7 @@ Button3.BackgroundColor3 = Color3.fromRGB(0, 170, 255)
 Button3.Position = UDim2.new(0.72, 0, 0.6, 0) -- Positionné à droite de HouseTextBox
 Button3.Size = UDim2.new(0.25, 0, 0.2, 0) -- Taille
 Button3.Font = Enum.Font.GothamBold
-Button3.Text = "Button 3"
+Button3.Text = "Send"
 Button3.TextColor3 = Color3.fromRGB(255, 255, 255)
 Button3.TextSize = 12
 applyCorners(Button3, 8)
