@@ -1,216 +1,273 @@
--- Chargement de la bibliothèque de notification
-local NotificationLoad = loadstring(game:HttpGet('https://raw.githubusercontent.com/treeofplant/Notif/main/library.lua', true))()
-
-if not NotificationLoad then
-    error("Notification library failed to load.")
-end
+-- Configuration
+local Config = {
+    COLORS = {
+        BACKGROUND = Color3.fromRGB(32, 34, 37), -- Fond plus sombre
+        SECONDARY = Color3.fromRGB(47, 49, 54), -- Éléments secondaires
+        ACCENT = Color3.fromRGB(114, 137, 218), -- Accent bleu Discord
+        TEXT = Color3.fromRGB(255, 255, 255),
+        ERROR = Color3.fromRGB(240, 71, 71),
+        SUCCESS = Color3.fromRGB(67, 181, 129)
+    },
+    CORNER_RADIUS = 6,
+    PADDING = 8,
+    ANIMATION_TIME = 0.2
+}
 
 -- Services
 local Players = game:GetService("Players")
+local TweenService = game:GetService("TweenService")
+local NotificationLoad = loadstring(game:HttpGet('https://raw.githubusercontent.com/treeofplant/Notif/main/library.lua', true))()
 
--- Créer les éléments GUI
-local ScreenGui = Instance.new("ScreenGui")
-local MainFrame = Instance.new("Frame")
-
--- TextBox pour les entrées
-local OverboardTextBox = Instance.new("TextBox") -- Renommé en Overboard
-local CarTextBox = Instance.new("TextBox") -- Renommé en Car
-local HouseTextBox = Instance.new("TextBox") -- Renommé en House
-
--- Boutons pour chaque action
-local Button1 = Instance.new("TextButton") 
-local Button2 = Instance.new("TextButton") 
-local Button3 = Instance.new("TextButton") 
-
--- Toggle UI Button
-local ToggleButton = Instance.new("TextButton") 
-
--- Fonction d'application des coins arrondis
-local function applyCorners(instance, cornerRadius)
-    local corner = Instance.new("UICorner")
-    corner.CornerRadius = UDim.new(0, cornerRadius)
-    corner.Parent = instance
+if not NotificationLoad then
+    error("Échec du chargement de la bibliothèque de notification.")
 end
 
--- Propriétés du GUI
-ScreenGui.Name = "CustomGui"
-ScreenGui.Parent = game.CoreGui
+-- Utilitaires
+local Utility = {}
 
-MainFrame.Name = "MainFrame"
-MainFrame.Parent = ScreenGui
-MainFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-MainFrame.Position = UDim2.new(0.5, -120, 0.5, -150) -- Centré
-MainFrame.Size = UDim2.new(0, 240, 0, 250) -- Taille
-applyCorners(MainFrame, 10)
+function Utility.CreateCorner(instance, radius)
+    local corner = Instance.new("UICorner")
+    corner.CornerRadius = UDim.new(0, radius or Config.CORNER_RADIUS)
+    corner.Parent = instance
+    return corner
+end
 
--- TextBox Overboard
-OverboardTextBox.Parent = MainFrame
-OverboardTextBox.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-OverboardTextBox.Position = UDim2.new(0.1, 0, 0.1, 0) -- Positionné en haut à gauche
-OverboardTextBox.Size = UDim2.new(0.6, 0, 0.2, 0) -- Taille allongée et plus petite
-OverboardTextBox.Font = Enum.Font.SourceSans
-OverboardTextBox.PlaceholderText = "Enter input for Overboard"
-OverboardTextBox.Text = ""
-OverboardTextBox.TextColor3 = Color3.fromRGB(255, 255, 255)
-OverboardTextBox.TextSize = 12
+function Utility.CreateStroke(instance, color, thickness)
+    local stroke = Instance.new("UIStroke")
+    stroke.Color = color or Config.COLORS.ACCENT
+    stroke.Thickness = thickness or 1
+    stroke.Parent = instance
+    return stroke
+end
 
--- Bouton 1 à droite de OverboardTextBox
-Button1.Parent = MainFrame
-Button1.BackgroundColor3 = Color3.fromRGB(0, 170, 255)
-Button1.Position = UDim2.new(0.72, 0, 0.1, 0) -- Positionné à droite de OverboardTextBox
-Button1.Size = UDim2.new(0.25, 0, 0.2, 0) -- Taille
-Button1.Font = Enum.Font.GothamBold
-Button1.Text = "Send"
-Button1.TextColor3 = Color3.fromRGB(255, 255, 255)
-Button1.TextSize = 12
-applyCorners(Button1, 8)
+function Utility.CreateIcon(parent, imageId, size)
+    local icon = Instance.new("ImageLabel")
+    icon.Size = UDim2.new(0, size, 0, size)
+    icon.BackgroundTransparency = 1
+    icon.Image = imageId
+    icon.Parent = parent
+    return icon
+end
 
--- TextBox Car
-CarTextBox.Parent = MainFrame
-CarTextBox.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-CarTextBox.Position = UDim2.new(0.1, 0, 0.35, 0) -- Positionné au milieu
-CarTextBox.Size = UDim2.new(0.6, 0, 0.2, 0) -- Taille allongée et plus petite
-CarTextBox.Font = Enum.Font.SourceSans
-CarTextBox.PlaceholderText = "Enter input for Car"
-CarTextBox.Text = ""
-CarTextBox.TextColor3 = Color3.fromRGB(255, 255, 255)
-CarTextBox.TextSize = 12
+-- Classe GUI
+local MusicGUI = {}
+MusicGUI.__index = MusicGUI
 
--- Bouton 2 à droite de CarTextBox
-Button2.Parent = MainFrame
-Button2.BackgroundColor3 = Color3.fromRGB(0, 170, 255)
-Button2.Position = UDim2.new(0.72, 0, 0.35, 0) -- Positionné à droite de CarTextBox
-Button2.Size = UDim2.new(0.25, 0, 0.2, 0) -- Taille
-Button2.Font = Enum.Font.GothamBold
-Button2.Text = "Send"
-Button2.TextColor3 = Color3.fromRGB(255, 255, 255)
-Button2.TextSize = 12
-applyCorners(Button2, 8)
+function MusicGUI.new()
+    local self = setmetatable({}, MusicGUI)
+    self:Initialize()
+    return self
+end
 
--- TextBox House
-HouseTextBox.Parent = MainFrame
-HouseTextBox.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-HouseTextBox.Position = UDim2.new(0.1, 0, 0.6, 0) -- Positionné en bas
-HouseTextBox.Size = UDim2.new(0.6, 0, 0.2, 0) -- Taille allongée et plus petite
-HouseTextBox.Font = Enum.Font.SourceSans
-HouseTextBox.PlaceholderText = "Enter input for House"
-HouseTextBox.Text = ""
-HouseTextBox.TextColor3 = Color3.fromRGB(255, 255, 255)
-HouseTextBox.TextSize = 12
+function MusicGUI:Initialize()
+    self:CreateMainGUI()
+    self:CreateMusicControls()
+    self:SetupEvents()
+end
 
--- Bouton 3 à droite de HouseTextBox
-Button3.Parent = MainFrame
-Button3.BackgroundColor3 = Color3.fromRGB(0, 170, 255)
-Button3.Position = UDim2.new(0.72, 0, 0.6, 0) -- Positionné à droite de HouseTextBox
-Button3.Size = UDim2.new(0.25, 0, 0.2, 0) -- Taille
-Button3.Font = Enum.Font.GothamBold
-Button3.Text = "Send"
-Button3.TextColor3 = Color3.fromRGB(255, 255, 255)
-Button3.TextSize = 12
-applyCorners(Button3, 8)
+function MusicGUI:CreateMainGUI()
+    -- ScreenGui principal
+    self.ScreenGui = Instance.new("ScreenGui")
+    self.ScreenGui.Name = "MusicControlGUI"
+    self.ScreenGui.Parent = game.CoreGui
 
--- Créer le bouton Toggle UI en haut de l'écran
-ToggleButton.Parent = ScreenGui
-ToggleButton.BackgroundColor3 = Color3.fromRGB(0, 170, 255)
-ToggleButton.Position = UDim2.new(0.5, -50, 0, -25) -- Positionné en haut au centre
-ToggleButton.Size = UDim2.new(0, 100, 0, 30)
-ToggleButton.Font = Enum.Font.GothamBold
-ToggleButton.Text = "Toggle UI"
-ToggleButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-ToggleButton.TextSize = 14
-applyCorners(ToggleButton, 8)
+    -- Toggle Button (plus petit et plus élégant)
+    self.ToggleButton = Instance.new("TextButton")
+    self.ToggleButton.Size = UDim2.new(0, 32, 0, 32)
+    self.ToggleButton.Position = UDim2.new(0, 10, 0.5, -16)
+    self.ToggleButton.BackgroundColor3 = Config.COLORS.ACCENT
+    self.ToggleButton.Text = "♫"
+    self.ToggleButton.TextColor3 = Config.COLORS.TEXT
+    self.ToggleButton.Font = Enum.Font.GothamBold
+    self.ToggleButton.TextSize = 16
+    self.ToggleButton.Parent = self.ScreenGui
+    
+    Utility.CreateCorner(self.ToggleButton, 16)
+    
+    -- Effet de survol pour le bouton toggle
+    local toggleStroke = Utility.CreateStroke(self.ToggleButton, Config.COLORS.ACCENT, 2)
+    toggleStroke.Transparency = 1
 
--- Fonction pour créer une notification
-local function createNotification(title, description, timeout)
+    -- Cadre principal (plus compact)
+    self.MainFrame = Instance.new("Frame")
+    self.MainFrame.Name = "MainFrame"
+    self.MainFrame.Size = UDim2.new(0, 250, 0, 280)
+    self.MainFrame.Position = UDim2.new(0, 50, 0.5, -140)
+    self.MainFrame.BackgroundColor3 = Config.COLORS.BACKGROUND
+    self.MainFrame.Visible = false
+    self.MainFrame.Parent = self.ScreenGui
+    
+    Utility.CreateCorner(self.MainFrame)
+    Utility.CreateStroke(self.MainFrame, Config.COLORS.SECONDARY, 1)
+
+    -- En-tête compact
+    local header = Instance.new("Frame")
+    header.Size = UDim2.new(1, 0, 0, 36)
+    header.BackgroundColor3 = Config.COLORS.SECONDARY
+    header.Parent = self.MainFrame
+    
+    local title = Instance.new("TextLabel")
+    title.Size = UDim2.new(1, -20, 1, 0)
+    title.Position = UDim2.new(0, 10, 0, 0)
+    title.BackgroundTransparency = 1
+    title.Text = "Music Controller"
+    title.TextColor3 = Config.COLORS.TEXT
+    title.TextSize = 14
+    title.Font = Enum.Font.GothamBold
+    title.TextXAlignment = Enum.TextXAlignment.Left
+    title.Parent = header
+    
+    Utility.CreateCorner(header)
+end
+
+function MusicGUI:CreateMusicControl(name, yPosition)
+    local container = Instance.new("Frame")
+    container.Size = UDim2.new(1, -16, 0, 68)
+    container.Position = UDim2.new(0, 8, 0, yPosition)
+    container.BackgroundColor3 = Config.COLORS.SECONDARY
+    container.BackgroundTransparency = 0.5
+    container.Parent = self.MainFrame
+    
+    Utility.CreateCorner(container)
+    
+    local title = Instance.new("TextLabel")
+    title.Size = UDim2.new(1, -16, 0, 20)
+    title.Position = UDim2.new(0, 8, 0, 4)
+    title.BackgroundTransparency = 1
+    title.Text = name
+    title.TextColor3 = Config.COLORS.TEXT
+    title.TextSize = 12
+    title.Font = Enum.Font.GothamMedium
+    title.TextXAlignment = Enum.TextXAlignment.Left
+    title.Parent = container
+    
+    local textBox = Instance.new("TextBox")
+    textBox.Size = UDim2.new(0.7, -12, 0, 28)
+    textBox.Position = UDim2.new(0, 8, 0, 28)
+    textBox.BackgroundColor3 = Config.COLORS.BACKGROUND
+    textBox.TextColor3 = Config.COLORS.TEXT
+    textBox.PlaceholderText = "ID Musique"
+    textBox.PlaceholderColor3 = Color3.fromRGB(127, 127, 127)
+    textBox.TextSize = 12
+    textBox.Font = Enum.Font.Gotham
+    textBox.Parent = container
+    
+    Utility.CreateCorner(textBox)
+    Utility.CreateStroke(textBox, Config.COLORS.ACCENT, 1)
+    
+    local button = Instance.new("TextButton")
+    button.Size = UDim2.new(0.3, -12, 0, 28)
+    button.Position = UDim2.new(0.7, 4, 0, 28)
+    button.BackgroundColor3 = Config.COLORS.ACCENT
+    button.Text = "✓"
+    button.TextColor3 = Config.COLORS.TEXT
+    button.TextSize = 14
+    button.Font = Enum.Font.GothamBold
+    button.Parent = container
+    
+    Utility.CreateCorner(button)
+    
+    -- Effets de survol
+    local buttonStroke = Utility.CreateStroke(button, Config.COLORS.ACCENT, 1)
+    buttonStroke.Transparency = 1
+    
+    button.MouseEnter:Connect(function()
+        TweenService:Create(button, TweenInfo.new(0.2), {BackgroundTransparency = 0.2}):Play()
+        TweenService:Create(buttonStroke, TweenInfo.new(0.2), {Transparency = 0}):Play()
+    end)
+    
+    button.MouseLeave:Connect(function()
+        TweenService:Create(button, TweenInfo.new(0.2), {BackgroundTransparency = 0}):Play()
+        TweenService:Create(buttonStroke, TweenInfo.new(0.2), {Transparency = 1}):Play()
+    end)
+    
+    return {
+        TextBox = textBox,
+        Button = button
+    }
+end
+
+function MusicGUI:CreateMusicControls()
+    self.Controls = {
+        Overboard = self:CreateMusicControl("Overboard", 46),
+        Car = self:CreateMusicControl("Voiture", 124),
+        House = self:CreateMusicControl("Maison", 202)
+    }
+end
+
+function MusicGUI:CreateNotification(title, description, isError)
     NotificationLoad:NewNotification({
-        ["Mode"] = "Custom",
-        ["Title"] = title,
-        ["Description"] = description,
-        ["Notification_Image"] = "rbxassetid://",
-        ["Notification_Sound"] = "rbxassetid://6031098704",
-        ["Timeout"] = timeout or 5,
-        ["Audio"] = false 
+        Mode = "Custom",
+        Title = title,
+        Description = description,
+        Notification_Image = "rbxassetid://",
+        Notification_Sound = "rbxassetid://6031098704",
+        Timeout = 3,
+        Audio = false
     })
 end
 
--- Action du bouton 1
-Button1.MouseButton1Click:Connect(function()
-    local musicId = OverboardTextBox.Text -- Obtenir l'ID de musique depuis TextBox
-    if musicId == "" then
-        createNotification("Error", "Please enter a valid music ID.", 5)
-        return
+function MusicGUI:SetupEvents()
+    -- Configuration des événements pour chaque contrôle
+    local function setupControl(name, control, remoteEvent, eventName)
+        control.Button.MouseButton1Click:Connect(function()
+            local musicId = control.TextBox.Text
+            
+            if musicId == "" then
+                self:CreateNotification("Erreur", "ID de musique manquant", true)
+                return
+            end
+            
+            local args = {
+                [1] = eventName,
+                [2] = musicId
+            }
+            
+            game:GetService("ReplicatedStorage").RE:FindFirstChild(remoteEvent):FireServer(unpack(args))
+            self:CreateNotification("Succès", "Musique appliquée", false)
+            control.TextBox.Text = ""
+        end)
     end
-
-    -- Arguments à envoyer au serveur
-    local args = {
-        [1] = "PickingScooterMusicText",
-        [2] = musicId
-    }
-
-    -- Envoie au serveur via FireServer
-    game:GetService("ReplicatedStorage").RE:FindFirstChild("1NoMoto1rVehicle1s"):FireServer(unpack(args))
-
-    -- Notification de réussite
-    createNotification("Success", "Music ID sent successfully!", 5)
-
-    -- Réinitialisation du TextBox après envoi
-    OverboardTextBox.Text = ""
-end)
-
--- Action du bouton 2
-Button2.MouseButton1Click:Connect(function()
-    local musicId = CarTextBox.Text -- Obtenir l'ID de musique depuis TextBox
-    if musicId == "" then
-        createNotification("Error", "Please enter a valid music ID.", 5)
-        return
-    end
-
-    -- Arguments à envoyer au serveur
-    local args = {
-        [1] = "PickingCarMusicText",
-        [2] = musicId -- Utiliser l'ID de musique saisi
-    }
-
-    -- Envoie au serveur via FireServer
-    game:GetService("ReplicatedStorage").RE:FindFirstChild("1Player1sCa1r"):FireServer(unpack(args))
-
-    -- Notification de réussite
-    createNotification("Success", "Car Music ID sent successfully!", 5)
-
-    -- Réinitialisation du TextBox après envoi
-    CarTextBox.Text = ""
-end)
-
--- Action du bouton 3
-Button3.MouseButton1Click:Connect(function()
-    local musicId = HouseTextBox.Text -- Obtenir l'ID de musique depuis TextBox
-    if musicId == "" then
-        createNotification("Error", "Please enter a valid music ID.", 5)
-        return
-    end
-
-    -- Arguments à envoyer au serveur
-    local args = {
-        [1] = "PickHouseMusicText",
-        [2] = musicId -- Utiliser l'ID de musique saisi
-    }
-
-    -- Envoie au serveur via FireServer
-    game:GetService("ReplicatedStorage").RE:FindFirstChild("1Player1sHous1e"):FireServer(unpack(args))
-
-    -- Notification de réussite
-    createNotification("Success", "House Music ID sent successfully!", 5)
-
-    -- Réinitialisation du TextBox après envoi
-    HouseTextBox.Text = ""
-end)
-
--- Fonction pour toggler le GUI
-local function toggleGUI()
-    MainFrame.Visible = not MainFrame.Visible
+    
+    setupControl("Overboard", self.Controls.Overboard, "1NoMoto1rVehicle1s", "PickingScooterMusicText")
+    setupControl("Car", self.Controls.Car, "1Player1sCa1r", "PickingCarMusicText")
+    setupControl("House", self.Controls.House, "1Player1sHous1e", "PickHouseMusicText")
+    
+    -- Effet de survol pour le bouton toggle
+    self.ToggleButton.MouseEnter:Connect(function()
+        TweenService:Create(self.ToggleButton, TweenInfo.new(0.2), {BackgroundTransparency = 0.2}):Play()
+    end)
+    
+    self.ToggleButton.MouseLeave:Connect(function()
+        TweenService:Create(self.ToggleButton, TweenInfo.new(0.2), {BackgroundTransparency = 0}):Play()
+    end)
+    
+    -- Animation du toggle
+    self.ToggleButton.MouseButton1Click:Connect(function()
+        local isVisible = self.MainFrame.Visible
+        
+        if not isVisible then
+            self.MainFrame.Position = UDim2.new(0, 30, 0.5, -140)
+            self.MainFrame.BackgroundTransparency = 1
+            self.MainFrame.Visible = true
+            
+            TweenService:Create(self.MainFrame, TweenInfo.new(Config.ANIMATION_TIME, Enum.EasingStyle.Back), {
+                Position = UDim2.new(0, 50, 0.5, -140),
+                BackgroundTransparency = 0
+            }):Play()
+        else
+            TweenService:Create(self.MainFrame, TweenInfo.new(Config.ANIMATION_TIME, Enum.EasingStyle.Quad), {
+                Position = UDim2.new(0, 30, 0.5, -140),
+                BackgroundTransparency = 1
+            }):Play()
+            
+            wait(Config.ANIMATION_TIME)
+            self.MainFrame.Visible = false
+        end
+    end)
 end
 
--- Action du bouton Toggle UI
-ToggleButton.MouseButton1Click:Connect(toggleGUI)
+-- Initialisation
+local gui = MusicGUI.new()
 
-print("!!!!!!!!!!ONLY MUSUC PASS!!!!!!!!!!")
+return gui
